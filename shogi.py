@@ -8,7 +8,7 @@ load_dotenv()
 TOKEN = os.getenv("TOKEN")
 
 bot = discord.Bot()
-GUILD_IDS = [1016139630309015603]
+GUILD_IDS = [879288794560471050]
 @bot.slash_command(description="２人で対局できます", guild_ids=GUILD_IDS)
 async def taikyoku(
     ctx: discord.ApplicationContext,
