@@ -9,6 +9,11 @@ TOKEN = os.getenv("TOKEN")
 
 bot = discord.Bot()
 GUILD_IDS = [879288794560471050]
+
+@bot.event
+async def on_ready():
+    print("僕は銀ラタウンに住む駆け出しの将棋少年。飛車チューとともにタイトル保持者を倒して、絶対に棋士モンマスターになってやるぜ！(BOT起動しました)")
+
 @bot.slash_command(description="２人で対局できます", guild_ids=GUILD_IDS)
 async def taikyoku(
     ctx: discord.ApplicationContext,
