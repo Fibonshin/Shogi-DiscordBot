@@ -3,13 +3,37 @@ import cshogi
 from discord import Option
 import os
 from dotenv import load_dotenv
+from PIL import Image, ImageDraw,ImageFilter
+import glob
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
 bot = discord.Bot()
 # GUILD_IDS = [879288794560471050] honnban
 GUILD_IDS = [1016139630309015603] #debug
+
+BOARD=Image.open("img/BOARD.png")
+EMPTY=Image.open("img/EMPTY.png")
+# 先手駒画像データ komas_S={"GI":<data of GI.png>,"KI":<data of KI.png>,......}
+komas_S={os.path.splitext(os.path.basename(name))[0]:Image.open(name) for name in glob.glob("img/koma/*.png")}
+#後手駒画像データ
+komas_G={os.path.splitext(os.path.basename(name))[0]:Image.open(name).rotate(180) for name in glob.glob("img/koma/*.png")}
 teban="先"
+
+
+async def move_koma(csa):
+    global teban
+    bef_x=int(csa[0])
+    bef_y=int(csa[1])
+    aft_x=int(csa[2])
+    aft_y=int(csa[3])
+    koma=csa[4:6]
+    BOARD.paste(EMPTY,(904-88*bef_x,-61+88*bef_y))
+    if teban=="先":
+        BOARD.paste(komas_S[koma],(904-88*aft_x,-61+88*aft_y))
+    else:
+        BOARD.paste(komas_G[koma],(904-88*aft_x,-61+88*aft_y))
+    BOARD.save("img/FOR_SEND.png")
 
 @bot.event
 async def on_ready():
@@ -39,15 +63,19 @@ async def sasu(
     if not(text in [cshogi.move_to_csa(move) for move in board.legal_moves]):
         await ctx.respond("その手は無効です")
         return
-    move = board.push_csa(text)    
+    move = board.push_csa(text)  
+    await move_koma(text)  
+    embed = discord.Embed(title=teban+"手番",description="何かいたらいいん") # TODO: 手数出力
+    embed.set_image(url="img/FOR_SEND.png") # FIXME: HTTPじゃないと画像を送れない
+    await ctx.respond(embed=embed)
+    
     if board.is_game_over():
         await ctx.respond("```" + str(board) + "```"+teban+"手の勝ちです🎉")
         return
     if teban == "後":teban = "先"
     elif teban == "先":teban = "後"
     await ctx.respond("```" + str(board) + "```"+teban+"手番です")
-
-    
+    print(board.pieces_in_hand) # TODO :これを用いて持ち駒実装
     
 
 bot.run(TOKEN)
