@@ -6,9 +6,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
-
 bot = discord.Bot()
-GUILD_IDS = [879288794560471050]
+# GUILD_IDS = [879288794560471050] honnban
+GUILD_IDS = [1016139630309015603] #debug
+teban="先"
 
 @bot.event
 async def on_ready():
@@ -19,8 +20,8 @@ async def taikyoku(
     ctx: discord.ApplicationContext,
 ):
     global board
-    global sengo
-    sengo = "先"
+    global teban
+    teban = "先"
     board = cshogi.Board()
     await ctx.respond("```駒名:歩から玉まで:FU,KY,KE,GI,KI,KA,HI,OU、\n\
 上の成駒:TO,NY,NK,NG,UM,RY位置:1一を11、\n\
@@ -34,17 +35,17 @@ async def sasu(
     ctx: discord.ApplicationContext,
     text: Option(str, required=True, description="指し手", )
 ):
-    global sengo
+    global teban
     if not(text in [cshogi.move_to_csa(move) for move in board.legal_moves]):
         await ctx.respond("その手は無効です")
         return
     move = board.push_csa(text)    
     if board.is_game_over():
-        await ctx.respond("```" + str(board) + "```"+sengo+"手の勝ちです🎉")
+        await ctx.respond("```" + str(board) + "```"+teban+"手の勝ちです🎉")
         return
-    if sengo == "後":sengo = "先"
-    elif sengo == "先":sengo = "後"
-    await ctx.respond("```" + str(board) + "```"+sengo+"手番です")
+    if teban == "後":teban = "先"
+    elif teban == "先":teban = "後"
+    await ctx.respond("```" + str(board) + "```"+teban+"手番です")
 
     
     
