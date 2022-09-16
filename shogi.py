@@ -2,14 +2,11 @@ import discord
 import cshogi
 from discord import Option
 import os
-from dotenv import load_dotenv
-from PIL import Image, ImageDraw,ImageFilter
+from PIL import Image
 import glob
-
-load_dotenv()
-TOKEN = os.getenv("TOKEN")
+TOKEN = "ここにトークンを入力"
 bot = discord.Bot()
-GUILD_IDS = [879288794560471050]
+GUILD_IDS = ["サーバーのIDを入力"]
 
 BOARD=Image.open("img/BOARD.png")
 EMPTY=Image.open("img/EMPTY.png")
